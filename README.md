@@ -37,13 +37,15 @@ Permite ao usuário aplicar valores em Poupança, CDB ou Tesouro Direto, de form
 
    🚀 *Como Executar*
 
-1. Instale Java 8 ou superior.
-2. Clone este repositório:
-     git clone https://github.com/andrewsec5/simulador-investimentos-java.git
-3. Compile o programa:
-     javac src/br/com/agibank/hacka/Main.java
-4. Execute o programa:
-     java -cp src br.com.agibank.hacka.Main
+1. Instale Java 8 ou superior e o Git.
+2. Clone este repositório no prompt de comando:
+     git clone https://github.com/andrewsec5/simulador-controle-investimentos-java.git
+3. Entre na página do projeto:
+     cd simulador-controle-investimentos-java
+4. Compile o programa:
+     javac -d out src/br/com/agibank/hacka/Main.java
+5. Execute o programa:
+     java -cp out br.com.agibank.hacka.Main
 
 ---
 
