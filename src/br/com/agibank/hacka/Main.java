@@ -5,33 +5,56 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 
 public class Main {
-    public static void main(String[] args) {
 
-        boolean val2 = false;
-        byte mes1 = 0;
-        byte mes2 = 0;
-        byte mes3 = 0;
+    public static BigDecimal validacao(Scanner scanner, String msg){
+        boolean val = false;
+        BigDecimal valor = null;
+        String entrada;
+
+        while(!val){
+            System.out.print(msg);
+            entrada = scanner.nextLine().replace(",", ".");
+            if (entrada.matches("\\d+(\\.\\d{1,2})?")) {
+                valor = new BigDecimal(entrada).setScale(2, RoundingMode.HALF_UP);
+                if (valor.compareTo(BigDecimal.ZERO) <= 0) {
+                    System.out.println("O valor informado deve ser maior que 0.\n");
+                }else{
+                    val = true;
+                }
+            } else {
+                System.out.println("Entrada inválida! Digite um número positivo com no máximo duas casas decimais.\n");
+            }
+        }
+        return valor;
+    }
+
+    public static byte valMes(Scanner scanner, String msg){
+        String entrada;
+        byte mes = 0;
+        boolean val = false;
+
+        while(!val) {
+            try {
+                System.out.print(msg);
+                entrada = scanner.nextLine();
+                mes = Byte.parseByte(entrada);
+                if (mes <= 0) {
+                    System.out.println("Insira um prazo válido! Digite um número positivo.\n");
+                } else {
+                    val = true;
+                }
+            } catch (NumberFormatException e) {
+                System.out.println("Formato inválido! Digite um número positivo.\n");
+            }
+        }
+        return mes;
+    }
+
+    public static Scanner scanner = new Scanner(System.in);
+
+    public static void validacaoInicial (){
         byte op1 = 0;
-        byte op2 = 1;
-        BigDecimal taxaPou = new BigDecimal("1.005");
-        BigDecimal taxaCdb = new BigDecimal("1.012");
-        BigDecimal taxaTes = new BigDecimal("1.008");
         String entrada1;
-        String entrada2;
-        String nome;
-        BigDecimal saldoAjustado = BigDecimal.ZERO;
-        BigDecimal invPou = BigDecimal.ZERO;
-        BigDecimal entPou = BigDecimal.ZERO;
-        BigDecimal invCdb = BigDecimal.ZERO;
-        BigDecimal entCdb = BigDecimal.ZERO;
-        BigDecimal invTes = BigDecimal.ZERO;
-        BigDecimal entTes = BigDecimal.ZERO;
-        BigDecimal rendPou = BigDecimal.ZERO;
-        BigDecimal rendCdb = BigDecimal.ZERO;
-        BigDecimal rendTes = BigDecimal.ZERO;
-
-        Scanner scanner = new Scanner(System.in);
-
         while (op1 != 1) {
             System.out.println("Bem vindo, essa é uma ferramenta de controle de investimentos pessoais.\nPara avançar, confirme ser uma pessoa física: ");
             System.out.println("1 - Sou pessoa física\n0 - NÃO sou pessoa física");
@@ -51,6 +74,33 @@ public class Main {
                 System.out.println("Entrada inválida! Digite apenas 1 ou 0.\n");
             }
         }
+    }
+
+    public static void main(String[] args) {
+
+        boolean val2 = false;
+        byte mes1 = 0;
+        byte mes2 = 0;
+        byte mes3 = 0;
+        byte op2 = 1;
+        BigDecimal taxaPou = new BigDecimal("1.005");
+        BigDecimal taxaCdb = new BigDecimal("1.012");
+        BigDecimal taxaTes = new BigDecimal("1.008");
+        String entrada2;
+        String nome;
+        BigDecimal saldoAjustado;
+        BigDecimal invPou = BigDecimal.ZERO;
+        BigDecimal entPou = BigDecimal.ZERO;
+        BigDecimal invCdb = BigDecimal.ZERO;
+        BigDecimal entCdb = BigDecimal.ZERO;
+        BigDecimal invTes = BigDecimal.ZERO;
+        BigDecimal entTes = BigDecimal.ZERO;
+        BigDecimal rendPou = BigDecimal.ZERO;
+        BigDecimal rendCdb = BigDecimal.ZERO;
+        BigDecimal rendTes = BigDecimal.ZERO;
+
+        validacaoInicial();
+
         System.out.print("Informe seu nome: ");
         nome = scanner.nextLine();
         saldoAjustado = validacao(scanner, "Insira o saldo disponivel para investimento: R$");
@@ -129,48 +179,5 @@ public class Main {
             System.out.println("Nenhum investimento aplicado.");
         }
         scanner.close();
-    }
-
-    public static BigDecimal validacao(Scanner scanner, String msg){
-        boolean val = false;
-        BigDecimal valor = null;
-        String entrada;
-
-        while(!val){
-            System.out.print(msg);
-            entrada = scanner.nextLine().replace(",", ".");
-            if (entrada.matches("\\d+(\\.\\d{1,2})?")) {
-                valor = new BigDecimal(entrada).setScale(2, RoundingMode.HALF_UP);
-                if (valor.compareTo(BigDecimal.ZERO) <= 0) {
-                    System.out.println("O valor informado deve ser maior que 0.\n");
-                }else{
-                    val = true;
-                }
-            } else {
-                System.out.println("Entrada inválida! Digite um número positivo com no máximo duas casas decimais.\n");
-            }
-        }
-        return valor;
-    }
-    public static byte valMes(Scanner scanner, String msg){
-        String entrada;
-        byte mes = 0;
-        boolean val = false;
-
-        while(!val) {
-            try {
-                System.out.print(msg);
-                entrada = scanner.nextLine();
-                mes = Byte.parseByte(entrada);
-                if (mes <= 0) {
-                    System.out.println("Insira um prazo válido! Digite um número positivo.\n");
-                } else {
-                    val = true;
-                }
-            } catch (NumberFormatException e) {
-                System.out.println("Formato inválido! Digite um número positivo.\n");
-            }
-        }
-        return mes;
     }
 }
