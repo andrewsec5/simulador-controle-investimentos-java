@@ -90,33 +90,83 @@ public class Main {
         return entrada;
     }
 
-    public static BigDecimal opcoesInvestimento(BigDecimal saldo, BigDecimal entrada, BigDecimal rendimento, BigDecimal taxa, byte meses) {
+    public static BigDecimal rendimento(BigDecimal entrada, BigDecimal rendimento, BigDecimal taxa, byte meses) {
         rendimento = rendimento.add(entrada.multiply(taxa.pow(meses)).setScale(2, RoundingMode.HALF_UP));
         return rendimento;
     }
 
+    public static BigDecimal menuInvestimento (BigDecimal[] investimentos, BigDecimal[] rendimentos, byte[] meses, BigDecimal saldo, String nome){
+        byte opcao = 1;
+        BigDecimal taxaPou = BigDecimal.valueOf(1.005);
+        BigDecimal taxaCdb = BigDecimal.valueOf(1.012);
+        BigDecimal taxaTes = BigDecimal.valueOf(1.008);
+        String entrada;
+        while (opcao != 0) {
+            BigDecimal entPou;
+            BigDecimal entCdb;
+            BigDecimal entTes;
+
+            System.out.println("\nMENU DE INVESTIMENTO\nUsuário: " + nome + "\nSaldo disponivel: R$" + saldo);
+            System.out.println("\nAplicações:\n1 - Poupança (0,5% a.m.)\n2 - CDB (1,2% a.m.)\n3 - Tesouro Direto (0,8% a.m.)\n0 - Encerrar e gerar relatório.");
+            System.out.print("Opção: ");
+            try {
+                entrada = scanner.nextLine();
+                opcao = Byte.parseByte(entrada);
+                if (opcao == 1) {
+                    System.out.println("\nPOUPANÇA\nSaldo: R$" + saldo);
+                    entPou = validacaoInvestimento(saldo);
+                    investimentos[0] = investimentos[0].add(entPou);
+                    meses[0] = valMes(scanner, "Insira o prazo de investimento (meses): ");
+                    rendimentos[0] = rendimento(entPou, rendimentos[0], taxaPou, meses[0]);
+                    saldo = saldo.subtract(entPou);
+                }
+                if (opcao == 2) {
+                    System.out.println("\nCDB\nSaldo: R$" + saldo);
+                    entCdb = validacaoInvestimento(saldo);
+                    investimentos[1] = investimentos[1].add(entCdb);
+                    meses[1] = valMes(scanner, "Insira o prazo de investimento (meses): ");
+                    rendimentos[1] = rendimento(entCdb, rendimentos[1], taxaCdb, meses[1]);
+                    saldo = saldo.subtract(entCdb);
+                }
+                if (opcao == 3) {
+                    System.out.println("\nTESOURO DIRETO\nSaldo: R$" + saldo);
+                    entTes = validacaoInvestimento(saldo);
+                    investimentos[2] = investimentos[2].add(entTes);
+                    meses[2] = valMes(scanner, "Insira o prazo de investimento (meses): ");
+                    rendimentos[2] = rendimento(entTes, rendimentos[2], taxaTes, meses[2]);
+                    saldo = saldo.subtract(entTes);
+                }
+            } catch (NumberFormatException e) {
+                System.out.println("Entrada inválida! Digite 1, 2, 3 ou 0.");
+            }
+        }
+        return saldo;
+    }
+
+    public static void relatorioInvestimentos(BigDecimal[] investimentos, BigDecimal[] rendimentos, BigDecimal saldo){
+        System.out.println("\nRELATÓRIO GERAL\nSaldo restante: R$" + saldo);
+        System.out.println();
+        if (investimentos[0].compareTo(BigDecimal.ZERO) > 0) {
+            System.out.println("Poupança:\nInvestimento inicial --> R$" + investimentos[0] + "\nRendimento final --> R$" + rendimentos[0] + "\n");
+        }
+        if (investimentos[1].compareTo(BigDecimal.ZERO) > 0) {
+            System.out.println("CDB:\nInvestimento inicial --> R$" + investimentos[1] + "\nRendimento final --> R$" + rendimentos[1] + "\n");
+        }
+        if (investimentos[2].compareTo(BigDecimal.ZERO) > 0) {
+            System.out.println("Tesouro Direto:\nInvestimento inicial --> R$" + investimentos[2] + "\nRendimento final --> R$" + rendimentos[2] + "\n");
+        }
+        if (investimentos[0].compareTo(BigDecimal.ZERO) == 0 && investimentos[1].compareTo(BigDecimal.ZERO) == 0 && investimentos[2].compareTo(BigDecimal.ZERO) == 0) {
+            System.out.println("Nenhum investimento aplicado.");
+        }
+    }
 
     public static void main(String[] args) {
 
-        String entrada;
         String nome;
-        byte opcao = 1;
-        byte mes1 = 0;
-        byte mes2 = 0;
-        byte mes3 = 0;
-        BigDecimal invPou = BigDecimal.ZERO;
-        BigDecimal invCdb = BigDecimal.ZERO;
-        BigDecimal invTes = BigDecimal.ZERO;
-        BigDecimal entPou;
-        BigDecimal entCdb;
-        BigDecimal entTes;
-        BigDecimal rendPou = BigDecimal.ZERO;
-        BigDecimal rendCdb = BigDecimal.ZERO;
-        BigDecimal rendTes = BigDecimal.ZERO;
-        BigDecimal taxaPou = new BigDecimal("1.005");
-        BigDecimal taxaCdb = new BigDecimal("1.012");
-        BigDecimal taxaTes = new BigDecimal("1.008");
-        BigDecimal saldoAjustado;
+        byte[] meses = new byte[3];
+        BigDecimal[] investimentos = {BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO};
+        BigDecimal[] rendimentos = {BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO};
+        BigDecimal saldoAjustado = BigDecimal.ZERO;
 
         validacaoInicial();
 
@@ -124,55 +174,10 @@ public class Main {
         nome = scanner.nextLine();
         saldoAjustado = validacao(scanner, "Insira o saldo disponivel para investimento: R$");
 
-        while (opcao != 0) {
-            System.out.println("\nMENU DE INVESTIMENTO\nUsuário: " + nome + "\nSaldo disponivel: R$" + saldoAjustado);
-            System.out.println("\nAplicações:\n1 - Poupança (0,5% a.m.)\n2 - CDB (1,2% a.m.)\n3 - Tesouro Direto (0,8% a.m.)\n0 - Encerrar e gerar relatório.");
-            System.out.print("Opção: ");
-            try {
-                entrada = scanner.nextLine();
-                opcao = Byte.parseByte(entrada);
-                if (opcao == 1) {
-                    System.out.println("\nPOUPANÇA\nSaldo: R$" + saldoAjustado);
-                    entPou = validacaoInvestimento(saldoAjustado);
-                    invPou = invPou.add(entPou);
-                    mes1 = valMes(scanner, "Insira o prazo de investimento (meses): ");
-                    rendPou = opcoesInvestimento(saldoAjustado, entPou, rendPou, taxaPou, mes1);
-                    saldoAjustado = saldoAjustado.subtract(entPou);
-                }
-                if (opcao == 2) {
-                    System.out.println("\nCDB\nSaldo: R$" + saldoAjustado);
-                    entCdb = validacaoInvestimento(saldoAjustado);
-                    invCdb = invCdb.add(entCdb);
-                    mes2 = valMes(scanner, "Insira o prazo de investimento (meses): ");
-                    rendCdb = opcoesInvestimento(saldoAjustado, entCdb, rendCdb, taxaCdb, mes2);
-                    saldoAjustado = saldoAjustado.subtract(entCdb);
-                }
-                if (opcao == 3) {
-                    System.out.println("\nTESOURO DIRETO\nSaldo: R$" + saldoAjustado);
-                    entTes = validacaoInvestimento(saldoAjustado);
-                    invTes = invTes.add(entTes);
-                    mes3 = valMes(scanner, "Insira o prazo de investimento (meses): ");
-                    rendTes = opcoesInvestimento(saldoAjustado, entTes, rendTes, taxaTes, mes3);
-                    saldoAjustado = saldoAjustado.subtract(entTes);
-                }
-            } catch (NumberFormatException e) {
-                System.out.println("Entrada inválida! Digite 1, 2, 3 ou 0.");
-            }
-        }
-        System.out.println("\nRELATÓRIO GERAL\nSaldo restante: R$" + saldoAjustado);
-        System.out.println();
-        if (mes1 > 0) {
-            System.out.println("Poupança:\nInvestimento inicial --> R$" + invPou + "\nRendimento em " + mes1 + " meses --> R$" + rendPou + "\n");
-        }
-        if (mes2 > 0) {
-            System.out.println("CDB:\nInvestimento inicial --> R$" + invCdb + "\nRendimento em " + mes2 + " meses --> R$" + rendCdb + "\n");
-        }
-        if (mes3 > 0) {
-            System.out.println("Tesouro Direto:\nInvestimento inicial --> R$" + invTes + "\nRendimento em " + mes3 + " meses --> R$" + rendTes + "\n");
-        }
-        if (mes1 == 0 && mes2 == 0 && mes3 == 0) {
-            System.out.println("Nenhum investimento aplicado.");
-        }
+        saldoAjustado = menuInvestimento(investimentos, rendimentos, meses, saldoAjustado, nome);
+
+        relatorioInvestimentos(investimentos, rendimentos, saldoAjustado);
+
         scanner.close();
     }
 }
