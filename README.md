@@ -1,7 +1,7 @@
-# simulador-investimentos-java
+
 Simulador de investimentos pessoais em Java (cálculos precisos e juros compostos)
 
- 💰 **Simulador de Investimentos Pessoais**
+ # 💰 **Simulador de Investimentos Pessoais**
 
 Simulador em Java para cálculo de rendimento de aplicações financeiras com base em juros compostos mensais.  
 Permite ao usuário aplicar valores em Poupança, CDB ou Tesouro Direto, de forma simples e interativa via terminal.
