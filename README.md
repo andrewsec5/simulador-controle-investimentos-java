@@ -1,5 +1,5 @@
 
-Simulador de investimentos pessoais em Java (cálculos precisos e juros compostos)
+Simulador de investimentos pessoais em Java
 
  # 💰 **Simulador de Investimentos Pessoais**
 
